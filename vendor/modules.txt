@@ -1,12 +1,11 @@
 # github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.1
 ## explicit
 github.com/360EntSecGroup-Skylar/excelize/v2
-# github.com/icarus-go/go-utils v0.0.4
-## explicit
 # github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 github.com/mohae/deepcopy
-# github.com/phachon/go-logger v0.0.0-20191215032019-86e4227f71ea
+# github.com/natefinch/lumberjack v2.0.0+incompatible
 ## explicit
+github.com/natefinch/lumberjack
 # github.com/richardlehane/mscfb v1.0.3
 github.com/richardlehane/mscfb
 # github.com/richardlehane/msoleps v1.0.1

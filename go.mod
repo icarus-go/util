@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.1
-	github.com/amoeba-inc/easyjson v1.0.0 // indirect
-	github.com/ugorji/go v1.2.6 // indirect
+	github.com/natefinch/lumberjack v2.0.0+incompatible
 	go.uber.org/zap v1.19.0
 )

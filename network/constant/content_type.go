@@ -4,7 +4,7 @@ type ContentType string
 
 const (
 	JSON        ContentType = "application/json;charset=utf-8"
-	FROM        ContentType = "application/x-www-form-urlencoded"
+	FORM        ContentType = "application/x-www-form-urlencoded"
 	QueryString ContentType = "querystring"
 )
 

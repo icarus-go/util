@@ -5,34 +5,74 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"pmo-test4.yz-intelligence.com/base/utils/network/constant"
-
+	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
+	"pmo-test4.yz-intelligence.com/base/utils/network/constant"
 	"strings"
 	"sync"
 )
 
 type netWork struct {
-	Link        string
-	ContentType constant.ContentType
+	Link string
+
+	method      constant.Method
+	contentType constant.ContentType
+
 	Header      map[string]string
-	Data        map[string]string
-	Debug       bool
+	formData    map[string]string
+	requestBody map[string]interface{}
+	queryString map[string]string
+
+	Config Config
+
 	sync.RWMutex
 }
 
-func New(link string) *netWork {
-	return &netWork{
+type Config struct {
+	debug bool        // 是否打印
+	log   *zap.Logger // 日志
+}
+
+//New 创建一个网络请求
+func New(link string, options ...Options) *netWork {
+	network := &netWork{
 		Link:        link,
-		ContentType: constant.FROM,
-		Debug:       false,
+		contentType: constant.FORM,
+		Config: Config{
+			debug: false,
+			log:   DefaultLogger(),
+		},
+	}
+
+	// Run the options on it
+	for _, option := range options {
+		option(network)
+	}
+
+	return network
+}
+
+//Options 配置项
+type Options func(*netWork)
+
+func (h *netWork) Logger(logger *zap.Logger) *netWork {
+	h.Config.log = logger
+	return h
+}
+
+//SetLogger 日志
+func SetLogger(logger *zap.Logger) Options {
+	return func(work *netWork) {
+		work.Config.log = logger
 	}
 }
 
-func (h *netWork) SetDebug(debug bool) *netWork {
-	h.Debug = debug
-	return h
+//SetDebug 设置是否打印参数
+func SetDebug(debug bool) Options {
+	return func(work *netWork) {
+		work.Config.debug = debug
+	}
 }
 
 //SetLink 更换请求地址
@@ -43,11 +83,37 @@ func (h *netWork) SetLink(link string) *netWork {
 	return h
 }
 
-//SetBody 设置数据包
-func (h *netWork) SetBody(body map[string]string) *netWork {
+//Form 设置数据包
+func (h *netWork) Form(data map[string]string) *netWork {
 	h.Lock()
 	defer h.Unlock()
-	h.Data = body
+	h.formData = data
+	h.contentType = constant.FORM
+	return h
+}
+
+//Body 设置
+func (h *netWork) Body(data map[string]interface{}) *netWork {
+	h.Lock()
+	defer h.Unlock()
+	h.requestBody = data
+	h.contentType = constant.JSON
+	return h
+}
+
+func (h *netWork) Post() *netWork {
+	h.Lock()
+	defer h.Unlock()
+	h.method = constant.POST
+	return h
+}
+
+//QueryString URL查询字符
+func (h *netWork) QueryString(query map[string]string) *netWork {
+	h.Lock()
+	defer h.Unlock()
+	h.queryString = query
+	h.contentType = constant.QueryString
 	return h
 }
 
@@ -59,63 +125,61 @@ func (h *netWork) SetHeader(header map[string]string) *netWork {
 	return h
 }
 
-//SetSendType 设置请求类型
-func (h *netWork) SetSendType(sendType constant.ContentType) *netWork {
+//Get 请求方式为GET
+func (h *netWork) Get() *netWork {
 	h.Lock()
 	defer h.Unlock()
-	h.ContentType = sendType
+	h.method = constant.GET
 	return h
 }
 
-func (h *netWork) Get() ([]byte, error) {
-	return h.send(constant.GET.Value())
-}
-
-func (h *netWork) Post() ([]byte, error) {
-	return h.send(constant.POST.Value())
-}
-
-func (h *netWork) send(method string) ([]byte, error) {
+func (h *netWork) Do() ([]byte, error) {
 	var (
 		httpRequest  *http.Request
 		httpResponse *http.Response
 		client       http.Client
-		data         string
-		err          error
 	)
 
-	if len(h.Data) > 0 {
-		data, err = h.bodyHandler()
-		if err != nil {
-			return nil, err
-		}
+	data, err := h.data()
+	if err != nil {
+		return nil, err
 	}
 
 	//忽略https的证书
 	client.Transport = h.GetHttpTransport()
 
-	httpRequest, err = http.NewRequest(method, h.Link, strings.NewReader(data))
+	httpRequest, err = http.NewRequest(h.method.Value(), h.Link, data)
 	if err != nil {
 		return nil, err
 	}
-	defer httpRequest.Body.Close()
 
-	//if h.Debug {
-	//
-	//	if h.ContentType != constant.QueryString {
-	//		requestPrintJSON, err := json.MarshalIndent(h.Data, "", "\t")
-	//		if err != nil {
-	//			return nil, err
-	//		}
-	//		h.Log.Debugf("content-Type: %s, requestURL: %s, data:\n %s", h.ContentType.Value(), h.Link, requestPrintJSON)
-	//	}
-	//
-	//	if h.ContentType == constant.QueryString {
-	//		h.Log.Debugf("content-Type: %s, requestURL: %s,  data: %s", h.ContentType, h.Link, data)
-	//	}
-	//
-	//}
+	defer func() error {
+		_ = httpRequest.Body.Close()
+		return nil
+	}()
 
+	if h.Config.debug {
+		if h.contentType == constant.FORM || h.contentType == constant.JSON {
+			var requestPrintJSON []byte
+
+			if h.contentType == constant.FORM {
+				requestPrintJSON, err = json.MarshalIndent(h.formData, "", "\t")
+				if err != nil {
+					return nil, err
+				}
+			} else if h.contentType == constant.JSON {
+				requestPrintJSON, err = json.MarshalIndent(h.requestBody, "", "\t")
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			h.Config.log.Info("FormData", zap.String("content-Type:", h.contentType.Value()), zap.String("requestURL", h.Link), zap.String("data", string(requestPrintJSON)))
+		} else if h.contentType == constant.QueryString {
+			h.Config.log.Info("QueryString - ", zap.String("Content-Type", h.contentType.Value()), zap.String("requestURL", h.Link))
+		}
+
+	}
 	h.setHeader(httpRequest)
 
 	httpResponse, err = client.Do(httpRequest)
@@ -130,21 +194,20 @@ func (h *netWork) send(method string) ([]byte, error) {
 
 	responseBytes, err := ioutil.ReadAll(httpResponse.Body)
 	if err != nil {
-		//h.Log.Errorf("parse json result failed. Exit by: %s", err.Error())
 		return nil, err
 	}
 
-	//if h.Debug {
-	//	var debugInterface interface{}
-	//	if err := json.Unmarshal(responseBytes, &debugInterface); err != nil {
-	//		return nil, err
-	//	}
-	//printJSON, err := json.MarshalIndent(debugInterface, "", "\t")
-	//if err != nil {
-	//	return nil, err
-	//}
-	//h.Log.Info(string(printJSON))
-	//}
+	if h.Config.debug {
+		var debugInterface interface{}
+		if err := json.Unmarshal(responseBytes, &debugInterface); err != nil {
+			return nil, err
+		}
+		printJSON, err := json.MarshalIndent(debugInterface, "", "\t")
+		if err != nil {
+			return nil, err
+		}
+		h.Config.log.Info("RESULT = \n" + string(printJSON))
+	}
 
 	return responseBytes, nil
 }
@@ -152,9 +215,9 @@ func (h *netWork) send(method string) ([]byte, error) {
 func (h *netWork) setHeader(httpRequest *http.Request) {
 	//设置默认header
 	if len(h.Header) == 0 {
-		if h.ContentType == constant.JSON {
+		if h.contentType == constant.JSON {
 			h.Header = map[string]string{
-				"Content-Type": h.ContentType.Value(),
+				"Content-Type": h.contentType.Value(),
 			}
 		}
 	}
@@ -175,29 +238,30 @@ func (h *netWork) GetHttpTransport() *http.Transport {
 	}
 }
 
-//bodyHandler
-func (h *netWork) bodyHandler() (string, error) {
-	if h.ContentType == constant.JSON {
-		sendBody, err := json.Marshal(h.Data)
+//data
+func (h *netWork) data() (*strings.Reader, error) {
+	if h.contentType == constant.JSON {
+		sendBody, err := json.Marshal(h.requestBody)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		return string(sendBody), nil
+		return strings.NewReader(string(sendBody)), nil
 	} // 如果是JSON格式的
 
-	if h.ContentType == constant.QueryString {
-		h.SetLink(URLLinkQueryString(h.Link, h.Data))
-		return "", nil
+	if h.contentType == constant.QueryString {
+		queryString := URLLinkQueryString(h.Link, h.queryString)
+		h.SetLink(queryString)
+		return strings.NewReader(""), nil
 	}
 
 	body := http.Request{}
 	if err := body.ParseForm(); err != nil {
-		return "", err
+		return strings.NewReader(""), err
 	}
 
-	for k, v := range h.Data {
+	for k, v := range h.formData {
 		body.Form.Add(k, v)
 	}
 
-	return body.Form.Encode(), nil
+	return strings.NewReader(body.Form.Encode()), nil
 }
