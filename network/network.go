@@ -56,11 +56,6 @@ func New(link string, options ...Options) *netWork {
 //Options 配置项
 type Options func(*netWork)
 
-func (h *netWork) Logger(logger *zap.Logger) *netWork {
-	h.Config.log = logger
-	return h
-}
-
 //SetLogger 日志
 func SetLogger(logger *zap.Logger) Options {
 	return func(work *netWork) {
