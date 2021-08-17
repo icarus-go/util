@@ -147,10 +147,8 @@ func (h *netWork) Do() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	defer func() error {
+	defer func() {
 		_ = httpRequest.Body.Close()
-		return nil
 	}()
 
 	if h.Config.debug {
@@ -181,7 +179,9 @@ func (h *netWork) Do() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer httpResponse.Body.Close()
+	defer func() {
+		_ = httpResponse.Body.Close()
+	}()
 
 	if httpResponse.StatusCode != http.StatusOK {
 		return nil, errors.New(fmt.Sprintf("error http convert :%d", httpResponse.StatusCode))
