@@ -11,15 +11,18 @@ var (
 	nonactivated = errors.New("令牌尚未激活")
 )
 
-type jwtToken struct {
-	SigningKey []byte
-}
+type (
+	jwtToken struct {
+		SigningKey []byte
+	}
+
+	// serialize 序列化方法
+	serialize func(token *jwt.Token) error
+)
 
 func New(key string) *jwtToken {
 	return &jwtToken{SigningKey: []byte(key)}
 }
-
-type ParseTo func() jwt.Claims
 
 //Get 获取Token
 func (j *jwtToken) Get(claims jwt.Claims) (string, error) {
@@ -28,7 +31,10 @@ func (j *jwtToken) Get(claims jwt.Claims) (string, error) {
 }
 
 //Parse 解析Token
-func (j *jwtToken) Parse(tokenString string, claims jwt.Claims, unmarshalToken func(token *jwt.Token) error) error {
+//  tokenString 令牌值
+//  claims 实现了 jwt.Claims的对象
+//  serialize 实际将token中包含的对象序列化为想要的对象的方法
+func (j *jwtToken) Parse(tokenString string, claims jwt.Claims, serialize serialize) error {
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (i interface{}, e error) {
 		return j.SigningKey, nil
 	})
@@ -45,7 +51,7 @@ func (j *jwtToken) Parse(tokenString string, claims jwt.Claims, unmarshalToken f
 		return invalid
 	}
 
-	if err := unmarshalToken(token); err != nil && token.Valid {
+	if err := serialize(token); err != nil && token.Valid {
 		return invalid
 	}
 	return invalid
