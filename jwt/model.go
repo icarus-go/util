@@ -8,6 +8,6 @@ type Config struct {
 	ExpiresAt     int64         `mapstructure:"expires-at" json:"expiresAt" yaml:"expires-at"`
 	BufferTime    int64         `mapstructure:"buffer-time" json:"bufferTime" yaml:"buffer-time"`
 	SigningKey    string        `mapstructure:"signing-key" json:"signingKey" yaml:"signing-key"`
-	ExpireRedis   time.Duration `mapstructure:"expire-redis" json:"expireRedis" yaml:"issuer"`
+	ExpireRedis   time.Duration `mapstructure:"expire-redis" json:"expireRedis" yaml:"expire-redis"`
 	UseMultiPoint bool          `mapstructure:"use-multipoint" json:"useMultiPoint" yaml:"use-multipoint"`
 }
