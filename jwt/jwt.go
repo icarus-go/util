@@ -11,6 +11,11 @@ var (
 	nonactivated = errors.New("令牌尚未激活")
 )
 
+const (
+	//DefaultKey 默认的jwt签名Key
+	DefaultKey = "yz-intelligence.com"
+)
+
 type (
 	jwtToken struct {
 		SigningKey []byte
