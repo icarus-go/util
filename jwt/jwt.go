@@ -6,9 +6,9 @@ import (
 )
 
 var (
-	invalid      = errors.New("令牌无效")
-	expired      = errors.New("令牌过期")
-	nonactivated = errors.New("令牌尚未激活")
+	Invalid      = errors.New("令牌无效")
+	Expired      = errors.New("令牌过期")
+	Nonactivated = errors.New("令牌尚未激活")
 )
 
 const (
@@ -46,18 +46,18 @@ func (j *jwtToken) Parse(tokenString string, claims jwt.Claims, serialize serial
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-				return invalid
+				return Invalid
 			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
-				return expired
+				return Expired
 			} else if ve.Errors&jwt.ValidationErrorNotValidYet != 0 {
-				return nonactivated
+				return Nonactivated
 			}
 		}
-		return invalid
+		return Invalid
 	}
 
 	if err := serialize(token); err != nil && token.Valid {
-		return invalid
+		return Invalid
 	}
-	return invalid
+	return Invalid
 }
