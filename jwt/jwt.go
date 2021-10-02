@@ -56,8 +56,13 @@ func (j *jwtToken) Parse(tokenString string, claims jwt.Claims, serialize serial
 		return Invalid
 	}
 
-	if err := serialize(token); err != nil && token.Valid {
-		return Invalid
+	if err := serialize(token); err != nil {
+		return err
 	}
+
+	if token.Valid {
+		return nil
+	}
+
 	return Invalid
 }
