@@ -17,3 +17,15 @@ const (
 func (d Format) Value() string {
 	return string(d)
 }
+
+type Location string
+
+const (
+	CST   Location = "CST"
+	UTC   Location = "UTC"
+	Local Location = "Local"
+)
+
+func (l Location) Value() string {
+	return string(l)
+}
