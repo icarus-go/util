@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"pmo-test4.yz-intelligence.com/base/utils/network/constant"
+	"pmo-test4.yz-intelligence.com/base/utils/network/data"
 	"strings"
 	"sync"
 )
@@ -23,6 +24,8 @@ type netWork struct {
 	formData    map[string]string
 	requestBody map[string]interface{}
 	queryString map[string]string
+
+	data.I
 
 	Config Config
 
