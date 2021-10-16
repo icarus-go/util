@@ -5,93 +5,141 @@ import (
 )
 
 type generate struct {
-	location Location
-	format   Format
-	err      error
-	result   interface{}
+	Error error
+
+	result *result
+
+	need Need
 }
 
 func New() *generate {
 	i := new(generate)
-	i.location = CST
+	i.need.dateFormat = format{
+		dateType: Ymd,
+		isSet:    false,
+	}
+	i.need.location = Local
+	i.result = &result{}
 	return i
 }
 
-func (g *generate) SetLocation(local Location) *generate {
-	g.location = local
+// Need 所需参数
+//  Author:  Kevin·CC
+func (g *generate) Need(need Need) *generate {
+	g.need = need
 	return g
 }
 
-func (g *generate) GetLocation() *time.Location {
-	if g.location == CST {
-		return time.UTC
-	}
-
-	if g.location == UTC {
-		return time.UTC
-	}
-
-	if g.location == Local {
-		return time.Local
-	}
-
-	return time.Local
+// SetLocation Parse地区
+//  Author:  Kevin·CC
+func (g *generate) SetLocation(local Location) *generate {
+	g.need.location = local
+	return g
 }
 
 // SetFormat 设置日期格式
 //  Author:  Kevin·CC
 func (g *generate) SetFormat(format Format) *generate {
-	g.format = format
+	g.need.Format(format)
 	return g
 }
 
+// Morning 今天的第一秒
+//  Author:  Kevin·CC
 func (g *generate) Morning() *generate {
-	if g.format != Ymd && g.format != YmdSlash {
-		g.format = Ymd
+	if !g.need.dateFormat.isSet {
+		g.need.dateFormat.dateType = Ymd
 	}
 
-	g.result = time.Now().Format(Ymd.Value()) + " 00:00:00"
+	val := OneDayMorning.Join(time.Now().In(g.need.GetLocation()).Format(g.need.dateFormat.dateType.Value()))
+	g.result.stringVal = &val
 	return g
 }
 
-func (g *generate) ParseInLocation(date string) *generate {
-	val, err := time.ParseInLocation(g.format.Value(), date, g.GetLocation())
+// Parse 根据设置的地区解析
+//  Author:  Kevin·CC
+func (g *generate) Parse(date string) *generate {
+	val, err := time.ParseInLocation(g.need.dateFormat.dateType.Value(), date, g.need.GetLocation())
 	if err != nil {
-		g.err = err
+		g.Error = err
 		return g
 	}
-	g.result = val
-	return g
-}
 
-func (g *generate) EndNight() *generate {
-	if g.format != Ymd && g.format != YmdSlash {
-		g.format = Ymd
+	if err == nil {
+		g.result.time = &val
 	}
 
-	g.result = time.Now().Format(Ymd.Value()) + " 23:59:59"
 	return g
 }
 
-// Timestamp
+// EndNight 今天最后一秒
 //  Author:  Kevin·CC
-func (g *generate) Timestamp() (int64, bool) {
-	r, ok := g.result.(int64)
-	return r, ok
+func (g *generate) EndNight() *generate {
+	val := OneDayEndNight.Join(time.Now().Format(Ymd.Value()))
+	g.result.stringVal = &val
+	return g
 }
 
-func (g *generate) Time() (time.Time, bool) {
-	t, ok := g.result.(time.Time)
-	return t, ok
-}
-
-// String
+// AnyTimeMorning 任何一天的第一秒
 //  Author:  Kevin·CC
-func (g *generate) String() (string, bool) {
-	r, ok := g.result.(string)
-	return r, ok
+func (g *generate) AnyTimeMorning(t time.Time) *generate {
+	val := t.Format(Ymd.Value())
+	parse, err := time.ParseInLocation(YMDHms.Value(), OneDayMorning.Join(val), g.need.GetLocation())
+	g.Error = err
+	g.result.time = &parse
+	return g
 }
 
-func (g *generate) Problem() error {
-	return g.err
+// AnyTimeEndNight 任何一天的最后一秒
+//  Author:  Kevin·CC
+func (g *generate) AnyTimeEndNight(t time.Time) *generate {
+	val := t.Format(Ymd.Value())
+	parse, err := time.ParseInLocation(YMDHms.Value(), OneDayEndNight.Join(val), g.need.GetLocation())
+	g.Error = err
+	g.result.time = &parse
+	return g
+}
+
+// AnyStringMorning 任何日期字符串的第一秒
+//  Author:  Kevin·CC
+func (g *generate) AnyStringMorning(val string) *generate {
+	t := Zero
+	return g.Parse(val).Time(&t).AnyTimeMorning(t)
+}
+
+// AnyStringEndNight 任何日期字符串的最后一秒
+//  Author:  Kevin·CC
+func (g *generate) AnyStringEndNight(val string) *generate {
+	t := Zero
+	return g.Parse(val).Time(&t).AnyTimeEndNight(t)
+}
+
+// AnyTimestampMorning 任何时间的一天最后一秒
+//  Author:  Kevin·CC
+func (g *generate) AnyTimestampMorning(timestamp, nanosecond int64) *generate {
+	return g.AnyTimeMorning(time.Unix(timestamp, nanosecond))
+}
+
+// AnyTimestampEndNight 任何时间戳的第一秒
+//  Author:  Kevin·CC
+func (g *generate) AnyTimestampEndNight(timestamp int64, nanosecond int64) *generate {
+	return g.AnyTimeMorning(time.Unix(timestamp, nanosecond))
+}
+
+// Format 根据SetFormat的日期格式化格式日期
+//  Author:  Kevin·CC
+func (g *generate) Format(t time.Time) *generate {
+	val := t.Format(g.need.dateFormat.dateType.Value())
+	g.result.stringVal = &val
+	return g
+}
+
+// Add 添加 time.Duration
+//  Author:  Kevin·CC
+func (g *generate) Add(t time.Time, d time.Duration) *generate {
+	after := t.Add(d)
+
+	g.result.time = &after
+
+	return g
 }
