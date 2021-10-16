@@ -10,68 +10,73 @@ type result struct {
 
 // Timestamp 时间戳类型结果
 //  Author:  Kevin·CC
-func (g *generate) Timestamp(timestamp *int64) *generate {
+func (g *Generate) Timestamp() int64 {
 	if g.result.timestamp != nil {
-		*timestamp = *g.result.timestamp
-		g.result.timestamp = nil
+		return *g.result.timestamp
 	}
 
 	if g.result.time != nil {
-		*timestamp = g.result.time.Unix()
-		g.result.timestamp = nil
+		return g.result.time.Unix()
 	}
 
 	if g.result.stringVal != nil {
 		g.Parse(*g.result.stringVal)
+
 		g.result.stringVal = nil
-		g.Timestamp(timestamp)
+
+		return g.result.time.Unix()
 	}
 
-	return g
+	return 0
 }
 
-// Time 时间类型结果
+// TimeValue 时间类型结果
 //  Author:  Kevin·CC
-func (g *generate) Time(val *time.Time) *generate {
+func (g *Generate) TimeValue() time.Time {
 	if g.result.time != nil {
-		*val = *g.result.time
-		g.result.time = nil
+		return *g.result.time
 	}
+
 	if g.result.timestamp != nil {
-		unix := time.Unix(*g.result.timestamp, 0)
-		*val = unix
-		g.result.timestamp = nil
+		return time.Unix(*g.result.timestamp, 0)
 	}
 
 	if g.result.stringVal != nil {
 		g.Parse(*g.result.stringVal)
+
 		g.result.stringVal = nil
-		g.Time(val)
-		return g
+
+		return *g.result.time
 	}
 
-	return g
+	return Zero
 }
 
 // String 字符串类型结果
 //  Author:  Kevin·CC
-func (g *generate) String(val *string) *generate {
+func (g *Generate) String() string {
 	if g.result.stringVal != nil && *g.result.stringVal != "" {
-		*val = *g.result.stringVal
-		g.result.stringVal = nil
-		return g
+		return *g.result.stringVal
+
 	}
 	if g.result.time != nil && !(*g.result.time).IsZero() {
-		g.Format(*g.result.time)
+		g.Format()
+
 		g.result.time = nil
-		g.String(val)
+
+		return *g.result.stringVal
 	}
 
 	if g.result.timestamp != nil && *g.result.timestamp != 0 {
-		g.Format(time.Unix(*g.result.timestamp, 0))
+		unix := time.Unix(*g.result.timestamp, 0)
+
+		g.result.time = &unix
+
 		g.result.timestamp = nil
-		g.String(val)
+
+		g.Format()
+		return *g.result.stringVal
 	}
 
-	return g
+	return ""
 }

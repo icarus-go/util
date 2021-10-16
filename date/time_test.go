@@ -6,53 +6,46 @@ import (
 )
 
 func Test_date_Morning(t *testing.T) {
-	value := ""
-	times := Zero
+	s := Now().Morning().String()
+	timeValue := Now().Morning().SetFormat(YMDHms).TimeValue()
+	timestamp := Now().Morning().SetFormat(YMDHms).Timestamp()
 
-	New().SetFormat(YmdCN).Morning().String(&value).SetFormat(YMDHmsCN).SetLocation(CST).Parse(value).Time(&times)
+	t.Logf("字符串: %s", s)
 
-	println(value)
+	t.Logf("time.Time : %d", timeValue.Unix())
 
-	print(times.Unix())
+	t.Logf("时间戳: %d", timestamp)
+
 }
 
 func Test_date_MorningByTime(t *testing.T) {
-	temp := Zero
 
-	if err := New().SetLocation(ShangHai).AnyTimeMorning(time.Now()).Time(&temp).Error; err != nil {
-		t.Error(err.Error())
-		return
-	}
-	t.Log(temp.Unix())
+	time := time.Now()
 
-	endResult := ""
-	if err := New().AnyTimeEndNight(time.Now()).Time(&temp).SetFormat(YMDHms).Format(temp).String(&endResult).Error; err != nil {
-		t.Error(err.Error())
-		return
-	}
-	t.Log("endNight: " + temp.Format(YMDHms.Value()))
-	t.Log("endNight: " + endResult)
+	s := Now().AnyTimeMorning(time).String()
+	timestamp := Now().AnyTimeMorning(time).Timestamp()
+	timeValue := Now().AnyTimeMorning(time).TimeValue()
 
-	s := ""
+	t.Logf("字符串: %s", s)
 
-	println(s)
+	t.Logf("time.Time : %d", timeValue.Unix())
+
+	t.Logf("时间戳: %d", timestamp)
+
 }
 
 func Test_date_Add(t *testing.T) {
-	s := ""
-	temp := Zero
 
-	a := ""
+	timestamp := Now().Add(time.Duration(10) + time.Second).Timestamp()
 
-	g := New()
-	if err := g.Morning().
-		String(&s).
-		SetFormat(YMDHms).Parse(s).Time(&temp).
-		Add(temp, time.Duration(10)*time.Second).String(&a).
-		Error; err != nil {
-		t.Log(err.Error())
-		return
-	}
+	timeValue := Now().Add(time.Duration(10) + time.Second).TimeValue()
 
-	t.Log(a)
+	s := Now().Add(time.Duration(10) + time.Second).SetFormat(YMDHms).String()
+
+	t.Logf("字符串: %s", s)
+
+	t.Logf("time.Time : %d", timeValue.Unix())
+
+	t.Logf("时间戳: %d", timestamp)
+
 }
