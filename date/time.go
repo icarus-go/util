@@ -55,8 +55,12 @@ func (g *Generate) SetFormat(format Format) *Generate {
 // Morning 今天的第一秒
 //  Author:  Kevin·CC
 func (g *Generate) Morning() *Generate {
-	val := OneDayMorning.Join(time.Now().In(g.need.GetLocation()).Format(g.need.dateFormat.dateType.Value()))
+	val := OneDayMorning.Join(g.result.time.In(g.need.GetLocation()).Format(g.need.dateFormat.dateType.Value()))
+
 	g.result.stringVal = &val
+
+	g.result.time = nil
+
 	return g
 }
 
@@ -64,9 +68,11 @@ func (g *Generate) Morning() *Generate {
 //  Author:  Kevin·CC
 func (g *Generate) EndNight() *Generate {
 
-	val := OneDayEndNight.Join(time.Now().Format(g.need.dateFormat.dateType.Value()))
+	val := OneDayEndNight.Join(g.result.time.Format(g.need.dateFormat.dateType.Value()))
 
 	g.result.stringVal = &val
+
+	g.result.time = nil
 
 	return g
 }
