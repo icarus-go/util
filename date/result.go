@@ -59,6 +59,7 @@ func (g *Generate) String() string {
 		return *g.result.stringVal
 
 	}
+
 	if g.result.time != nil && !(*g.result.time).IsZero() {
 		g.Format()
 
@@ -75,7 +76,12 @@ func (g *Generate) String() string {
 		g.result.timestamp = nil
 
 		g.Format()
-		return *g.result.stringVal
+
+		result := *g.result.stringVal
+
+		g.result.stringVal = nil
+
+		return result
 	}
 
 	return ""
