@@ -96,9 +96,9 @@ func (g *Generate) Parse(date string) *Generate {
 
 // AnyTimeMorning 任何一天的第一秒
 //  Author:  Kevin·CC
-func (g *Generate) AnyTimeMorning(t time.Time) *Generate {
-	val := t.Format(Ymd.Value())
-	parse, err := time.ParseInLocation(YMDHms.Value(), OneDayMorning.Join(val), g.need.GetLocation())
+func (g *Generate) AnyTimeMorning() *Generate {
+	value := g.Format().String()
+	parse, err := time.ParseInLocation(YMDHms.Value(), OneDayMorning.Join(value), g.need.GetLocation())
 	g.Error = err
 	g.result.time = &parse
 	return g
@@ -133,13 +133,17 @@ func (g *Generate) AnyStringEndNight(val string) *Generate {
 // AnyTimestampMorning 任何时间的一天最后一秒
 //  Author:  Kevin·CC
 func (g *Generate) AnyTimestampMorning(timestamp, nanosecond int64) *Generate {
-	return g.AnyTimeMorning(time.Unix(timestamp, nanosecond))
+	val := time.Unix(timestamp, nanosecond)
+	g.result.time = &val
+	return g.AnyTimeMorning()
 }
 
 // AnyTimestampEndNight 任何时间戳的第一秒
 //  Author:  Kevin·CC
 func (g *Generate) AnyTimestampEndNight(timestamp int64, nanosecond int64) *Generate {
-	return g.AnyTimeMorning(time.Unix(timestamp, nanosecond))
+	val := time.Unix(timestamp, nanosecond)
+	g.result.time = &val
+	return g.AnyTimeMorning()
 }
 
 // Format 根据SetFormat的日期格式化格式日期
