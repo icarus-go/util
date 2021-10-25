@@ -1,68 +1,54 @@
 package format
 
 import (
+	"database/sql"
+	"database/sql/driver"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
-type _array struct{}
+type Boolean bool
 
-var Array = new(_array)
-
-//ToString 将数组格式化为字符串
-//@author: [SliverHorn](https://github.com/SliverHorn)
-func (_array) ToString(array []interface{}) string {
-	return strings.Replace(strings.Trim(fmt.Sprint(array), "[]"), " ", ",", -1)
+// Int 布尔对应数值
+//  Author:  Kevin·CC
+func (b Boolean) Int() int {
+	if b {
+		return 1
+	}
+	return 0
 }
 
-// InterfacesToUint64s interface{}->uint64
-//  Author:  Kevin·CC
-func InterfacesToUint64s(slices []interface{}) []uint64 {
-	res := make([]uint64, 0, len(slices))
-
-	for _, slice := range slices {
-		if val, ok := slice.(uint64); ok {
-			res = append(res, val)
-		}
-	}
-	return res
+// Scan 扫描
+// Author Kevin·CC
+func (b *Boolean) Scan(value interface{}) error {
+	nullBool := sql.NullBool{}
+	err := nullBool.Scan(value)
+	*b = Boolean(nullBool.Bool)
+	return err
 }
 
-// InterfacesToUints []interface{} -> []int
-//  Author:  Kevin·CC
-func InterfacesToUints(slices []interface{}) []uint {
-	res := make([]uint, 0, len(slices))
-
-	for _, slice := range slices {
-		if val, ok := slice.(uint); ok {
-			res = append(res, val)
-		}
-	}
-	return res
+// Value 值
+// Author Kevin·CC
+func (b *Boolean) Value() (driver.Value, error) {
+	return driver.Value(strconv.FormatBool(bool(*b))), nil
 }
 
-// InterfacesToStrings interface{} -> string
-//  Author:  Kevin·CC
-func InterfacesToStrings(slices []interface{}) []string {
-	res := make([]string, 0, len(slices))
-
-	for _, slice := range slices {
-		if val, ok := slice.(string); ok {
-			res = append(res, val)
-		}
-	}
-	return res
+// MarshalJSON 序列化
+// Author Kevin·CC
+func (b *Boolean) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, strconv.FormatBool(bool(*b)))), nil
 }
 
-// InterfacesToInt64s interface{} -> int64
-//  Author:  Kevin·CC
-func InterfacesToInt64s(slices []interface{}) []int64 {
-	res := make([]int64, 0, len(slices))
+// UnmarshalJSON 反序列化
+// Author Kevin·CC
+func (b *Boolean) UnmarshalJSON(bytes []byte) error {
+	boolValue, err := strconv.ParseBool(string(bytes))
+	*b = Boolean(boolValue)
+	return err
+}
 
-	for _, slice := range slices {
-		if val, ok := slice.(int64); ok {
-			res = append(res, val)
-		}
-	}
-	return res
+// GormDataType gorm 定义数据库字段类型
+// Author Kevin·CC
+func (b *Boolean) GormDataType() string {
+	return "tinyint"
 }
