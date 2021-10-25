@@ -10,6 +10,11 @@ type injection struct{}
 // Injection 防止SQL注入
 var Injection = new(injection)
 
+// Filter
+//  Description: 过滤单个字符串值
+//  Author: Kevin·CC
+//  Param: value 值
+//  return string 过滤后的值
 func (injection) Filter(value string) string {
 	value = strings.TrimSpace(value) // 过滤空格
 
