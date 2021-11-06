@@ -12,7 +12,7 @@ type _zip struct{}
 var ZIP = new(_zip)
 
 //Compression 压缩文件
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 func (z _zip) Compression(fileName, oldForm, newForm string, files ...string) error {
 	newZipFile, err := os.Create(fileName)
 	if err != nil {

@@ -21,7 +21,7 @@ type _breakPointContinue struct {
 var BreakPointContinue = new(_breakPointContinue)
 
 //BreakPointContinue 断点续传
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 func (f *_breakPointContinue) BreakPointContinue(content []byte, fileName, fileMd5 string, contentNumber int) (path string, err error) {
 	path = constant.BreakPointDir + fileMd5 + "/"
 	if err = os.MkdirAll(path, os.ModePerm); err != nil {
@@ -31,15 +31,15 @@ func (f *_breakPointContinue) BreakPointContinue(content []byte, fileName, fileM
 }
 
 //CheckMd5 检查Md5
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 // return
-//  @param bool 是否可以继续
+//  param bool 是否可以继续
 func (f *_breakPointContinue) CheckMd5(content []byte, chunkMd5 string) bool {
 	fileMd5 := encrypt.MD5V(content)
 	return fileMd5 == chunkMd5
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 //makeFileContent 创建切片内容
 func (f *_breakPointContinue) makeFileContent(content []byte, fileName string, fileDir string, contentNumber int) (path string, err error) {
 	path = fileDir + fileName + "_" + strconv.Itoa(contentNumber)
@@ -57,7 +57,7 @@ func (f *_breakPointContinue) makeFileContent(content []byte, fileName string, f
 }
 
 //MakeFile 创建切片文件
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 func (f *_breakPointContinue) MakeFile(fileName string, FileMd5 string) (path string, err error) {
 	path = constant.FinishDir + fileName
 	if f.fileInfo, err = ioutil.ReadDir(constant.BreakPointDir + FileMd5); err != nil {
@@ -81,7 +81,7 @@ func (f *_breakPointContinue) MakeFile(fileName string, FileMd5 string) (path st
 }
 
 //RemoveChunk 移除切片
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 func (f *_breakPointContinue) RemoveChunk(fileMD5 string) error {
 	return os.RemoveAll(constant.BreakPointDir + fileMD5)
 }

@@ -9,7 +9,7 @@ type _struct struct{}
 var Struct = new(_struct)
 
 //ToMap 利用反射将结构体转化为map
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 func (_struct) ToMap(obj interface{}) map[string]interface{} {
 	obj1 := reflect.TypeOf(obj)
 
