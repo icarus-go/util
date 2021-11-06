@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 )
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@description: md5加密
+//author: [SliverHorn](https://github.com/SliverHorn)
+//description: md5加密
 func MD5V(str []byte) string {
 	h := md5.New()
 	h.Write(str)

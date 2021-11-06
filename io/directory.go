@@ -10,7 +10,7 @@ var Directory = new(_directory)
 type _directory struct{}
 
 //PathExists 文件目录是否存在
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 func (d *_directory) PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
@@ -23,7 +23,7 @@ func (d *_directory) PathExists(path string) (bool, error) {
 }
 
 //BatchCreate 批量创建文件夹
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 func (d *_directory) BatchCreate(directories ...string) error {
 	for _, directory := range directories {
 		if exist, err := d.PathExists(directory); err != nil {
@@ -41,7 +41,7 @@ func (d *_directory) BatchCreate(directories ...string) error {
 }
 
 //Create 批量创建文件夹
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//author: [SliverHorn](https://github.com/SliverHorn)
 func (d *_directory) Create(dirs ...string) error {
 	for _, v := range dirs {
 		if exist, err := d.PathExists(v); err != nil {

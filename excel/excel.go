@@ -55,11 +55,11 @@ func (e *_excel) ExportByInterface(export model.ExcelExport) error {
 // Parse 通过xlsx导入解析数据
 // Author [Kevin-CC](https://github.com/icarus-go)
 // formal
-//  @param header 文件头
-//  @param _import 接口对象 实现该方法要求的方法 model.ExcelImport
+//  param header 文件头
+//  param _import 接口对象 实现该方法要求的方法 model.ExcelImport
 // return
-//  @param []map[string]interface{} 表数据
-//  @param error 错误信息
+//  param []map[string]interface{} 表数据
+//  param error 错误信息
 func (e *_excel) Parse(header *multipart.FileHeader, _import model.ExcelImport) ([]map[string]interface{}, error) {
 	if e.file, e.err = header.Open(); e.err != nil {
 		return nil, e.err
@@ -82,13 +82,13 @@ func (e *_excel) Parse(header *multipart.FileHeader, _import model.ExcelImport) 
 //Rewrite 重写数据到某端，根据业务数据决定, 并且支持分批执行且是否忽略错误
 // Author [Kevin-CC](https://github.com/icarus-go)
 // formal
-//  @param entities 数据集
-//  @param rewrite 重写到哪个端所需执行的方法
-//  @param pageSize 分批执行多少条的页码
-//  @param isPage 是否分页
-//  @param isIgnore 分页后是否忽略每次回写数据时发生的错误
+//  param entities 数据集
+//  param rewrite 重写到哪个端所需执行的方法
+//  param pageSize 分批执行多少条的页码
+//  param isPage 是否分页
+//  param isIgnore 分页后是否忽略每次回写数据时发生的错误
 // return
-//  @param error 重写到某端的错误信息
+//  param error 重写到某端的错误信息
 func (e *_excel) Rewrite(entities []map[string]interface{}, rewrite rewrite.Data, pageSize int, isPage, isIgnore bool) error {
 	if !isPage {
 		return rewrite(&entities)
