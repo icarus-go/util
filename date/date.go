@@ -54,3 +54,17 @@ func (o OneTime) Value() string {
 func (o OneTime) Join(val string) string {
 	return val + o.Value()
 }
+
+const (
+	gregorianCutOverYear       = 1582
+	gregorianCutoverYearJulian = 1582
+)
+
+func IsLeapYear(year int) bool {
+	if year&3 != 0 {
+		return false
+	}
+
+	//todo 暂未支持Julian
+	return (year%100 != 0) || (year%400 == 0) // Gregorian
+}
