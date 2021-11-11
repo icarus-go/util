@@ -5,11 +5,12 @@ import (
 	"regexp"
 )
 
-var POWER = []int{7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2}
+type mainland15 struct{}
 
-type Mainland15 struct{}
+// Mainland15 大陆15位身份证
+var Mainland15 = new(mainland15)
 
-func (Mainland15) IsLocalValidIDCard(idCard string) bool {
+func (mainland15) IsLocalValidIDCard(idCard string) bool {
 	match, err := regexp.Match(constant.Numbers.Value(), []byte(idCard))
 	if err != nil {
 		return false
