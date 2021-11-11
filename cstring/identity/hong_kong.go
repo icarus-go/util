@@ -6,9 +6,11 @@ import (
 	"strings"
 )
 
-type HongKong struct{}
+type hongKong struct{}
 
-func (h HongKong) IsLocalValidIDCard(idCard string) bool {
+var HongKong = hongKong{}
+
+func (h hongKong) IsLocalValidIDCard(idCard string) bool {
 	idCardBytes := []byte(idCard)
 	match, err := regexp.Match("^[A-Z]{1,2}[0-9]{6}\\(?[0-9A]\\)?$", idCardBytes)
 	if err != nil {
@@ -21,7 +23,7 @@ func (h HongKong) IsLocalValidIDCard(idCard string) bool {
 	return h.isValidHKCard(idCard)
 }
 
-func (h HongKong) isValidHKCard(idCard string) (ok bool) {
+func (h hongKong) isValidHKCard(idCard string) (ok bool) {
 	card := strings.ReplaceAll(idCard, "[()]", "")
 	var sum int
 	firstCode := strings.ToUpper(string(card[0]))[0]
