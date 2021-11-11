@@ -19,9 +19,9 @@ func New(length constant.IdentityLength) (AreaFactory, error) {
 	case constant.Mainland18:
 		return &Mainland18{}, nil
 	case constant.TaiWanAoMen:
-		return GangAoTai{}, nil
+		return TaiWanAoMen, nil
 	case constant.HongKong:
-		return HongKong{}, nil
+		return HongKong, nil
 	}
 	return &Mainland18{}, errors.New("错误身份证长度")
 }

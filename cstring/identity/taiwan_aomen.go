@@ -7,9 +7,11 @@ import (
 	"strings"
 )
 
-type GangAoTai struct{}
+type taiWanAoMen struct{}
 
-func (g GangAoTai) IsLocalValidIDCard(idCard string) bool {
+var TaiWanAoMen = taiWanAoMen{}
+
+func (t taiWanAoMen) IsLocalValidIDCard(idCard string) bool {
 	if idCard == "" {
 		return false
 	}
@@ -26,10 +28,8 @@ func (g GangAoTai) IsLocalValidIDCard(idCard string) bool {
 		return false
 	}
 
-	var info []string
-
 	if match {
-		info = g.GetInfo(idCard)
+		return t.isValid(idCard)
 	} // 台湾
 
 	match, err = regexp.Match("^[157][0-9]{6}\\(?[0-9A-Z]\\)?$", idCardBytes)
@@ -38,16 +38,18 @@ func (g GangAoTai) IsLocalValidIDCard(idCard string) bool {
 	}
 
 	if match {
-		info[0] = "澳门"
-		info[1] = "N"
-		info[2] = "true"
+		return true
 	} // 香港
 
 	return false
 }
 
-func (g GangAoTai) GetInfo(idCard string) []string {
-
+// isValid
+//  Description: 获取台湾身份证解析
+//  Author: Kevin·CC
+//  Param: idCard
+//  return bool
+func (t taiWanAoMen) isValid(idCard string) bool {
 	var info = make([]string, 3)
 	info[0] = "台湾"
 	firstCode := string(idCard[1])
@@ -60,16 +62,6 @@ func (g GangAoTai) GetInfo(idCard string) []string {
 		info[2] = "false"
 	}
 
-	if g.IsValidTaiWan(idCard) {
-		info[2] = "true"
-	} else {
-		info[2] = "false"
-	}
-
-	return info
-}
-
-func (GangAoTai) IsValidTaiWan(idCard string) bool {
 	if len(idCard) != 10 {
 		return false
 	}

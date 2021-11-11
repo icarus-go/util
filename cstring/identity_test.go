@@ -10,7 +10,7 @@ import (
 
 func Test_Identity_Substring(t *testing.T) {
 
-	valid := identity.IsValid("D5296953")
+	valid := identity.IsValid("D5296952")
 
 	fmt.Printf("%v", valid)
 	fmt.Printf("%v", len("D5296952"))
