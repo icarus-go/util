@@ -9,7 +9,7 @@ import (
 
 type taiWanAoMen struct{}
 
-var TaiWanAoMen = taiWanAoMen{}
+var TaiWanAoMen = new(taiWanAoMen)
 
 func (t taiWanAoMen) IsLocalValidIDCard(idCard string) bool {
 	if idCard == "" {

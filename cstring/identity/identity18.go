@@ -6,9 +6,12 @@ import (
 	"strconv"
 )
 
-type Mainland18 struct{}
+type mainland18 struct{}
 
-func (Mainland18) IsLocalValidIDCard(idCard string) bool {
+// Mainland18大陆18位身份证
+var Mainland18 = new(mainland18)
+
+func (mainland18) IsLocalValidIDCard(idCard string) bool {
 	if _, ok := constant.ProvinceCode[idCard[0:2]]; !ok {
 		return false
 	}
@@ -39,6 +42,9 @@ func (Mainland18) IsLocalValidIDCard(idCard string) bool {
 
 	return false
 }
+
+var POWER = []int{7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2}
+
 func GetPowerSum(code string) int {
 	sum := 0
 	for index, i := range code {

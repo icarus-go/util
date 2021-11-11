@@ -15,13 +15,13 @@ type AreaFactory interface {
 func New(length constant.IdentityLength) (AreaFactory, error) {
 	switch length {
 	case constant.Mainland15:
-		return &Mainland15{}, nil
+		return Mainland15, nil
 	case constant.Mainland18:
-		return &Mainland18{}, nil
+		return Mainland18, nil
 	case constant.TaiWanAoMen:
 		return TaiWanAoMen, nil
 	case constant.HongKong:
 		return HongKong, nil
 	}
-	return &Mainland18{}, errors.New("错误身份证长度")
+	return &mainland18{}, errors.New("错误身份证长度")
 }
