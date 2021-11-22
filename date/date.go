@@ -5,14 +5,21 @@ import "time"
 type Format string
 
 const (
+	// YMDNumber 年月日时间
+	YMDNumber Format = "20060102"
+	// YMDHmsNumber 年月日时分秒整形数字
+	YMDHmsNumber Format = "20060102150405"
+
 	//YMDHmsCN 中文年月日时分秒
 	YMDHmsCN Format = "2006年01月02日 15时04分05秒"
 	//YmdCN 中文年月日
 	YmdCN Format = "2006年01月02日"
+
 	//YMDHms 年-月-日 时:分:秒
 	YMDHms Format = "2006-01-02 15:04:05"
 	//Ymd 年-月-日
 	Ymd Format = "2006-01-02"
+
 	//YMDHmsSlash 年/月/日 时:分:秒
 	YMDHmsSlash Format = "2006/01/02 15:04:05"
 	//YmdSlash 年/月/日

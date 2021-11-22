@@ -3,6 +3,7 @@ package network
 import (
 	"errors"
 	"net"
+	"strings"
 )
 
 type _ip struct{}
@@ -33,7 +34,7 @@ func (ip *_ip) Get() (net.IP, error) {
 			return ip, nil
 		}
 	}
-	return nil, errors.New("connected to the network?")
+	return nil, errors.New("connected to the network")
 }
 
 func (*_ip) getIpFromAddr(addr net.Addr) net.IP {
@@ -53,4 +54,22 @@ func (*_ip) getIpFromAddr(addr net.Addr) net.IP {
 	}
 
 	return ip
+}
+
+//GetRequestIP 获取请求时使用的IP
+func GetRequestIP(uri ...string) string {
+	if len(uri) == 0 {
+		uri = append(uri, "www.baidu.com:80")
+	}
+
+	// conn, err := net.Dial("udp", "www.baidu.com:80")
+	conn, err := net.Dial("udp", uri[0])
+	if err != nil {
+		return ""
+	}
+	defer conn.Close()
+
+	addr := strings.Split(conn.LocalAddr().String(), ":")
+
+	return addr[0]
 }
