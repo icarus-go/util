@@ -3,8 +3,8 @@ package encrypt
 import (
 	"crypto/sha1"
 	sha "crypto/sha256"
-	"encoding/base64"
-	"encoding/hex"
+	base64Encoding "encoding/base64"
+	hexEncoding "encoding/hex"
 )
 
 type sha256 struct{}
@@ -20,7 +20,7 @@ func (*sha256) Get(message string) string {
 	bytes := hash.Sum(nil)
 
 	//返回哈希值
-	return hex.EncodeToString(bytes) //将字符串编码为16进制格式,返回字符串
+	return hexEncoding.EncodeToString(bytes) //将字符串编码为16进制格式,返回字符串
 }
 
 //Sha1Encrypt
@@ -31,5 +31,5 @@ func (*sha256) Get(message string) string {
 func Sha1Encrypt(str string) string {
 	h := sha1.New()
 	h.Write([]byte(str))
-	return base64.URLEncoding.EncodeToString(h.Sum(nil))
+	return base64Encoding.URLEncoding.EncodeToString(h.Sum(nil))
 }
