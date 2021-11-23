@@ -1,94 +1,64 @@
 package encrypt
 
 import (
-	"bytes"
-	"crypto/aes"
-	"crypto/cipher"
-	"encoding/base64"
-	"errors"
-	"strings"
+	"pmo-test4.yz-intelligence.com/base/utils/encrypt/aes/padding"
+	"pmo-test4.yz-intelligence.com/base/utils/encrypt/aes/pattern"
 )
 
-// AesEncrypt Aes加密
-func AesEncrypt(str, key string) (string, error) {
-	keyData := []byte(key)
-	if len(keyData) != 16 {
-		return "", errors.New("aes key 长度必须等于16")
-	}
+//AesECBEncrypt
+//  Author: Kevin·CC
+//  Description: AES加密算法 ECB 模式 Base64Encode 编码
+//  Param value 要加密的值
+//  Param key 加密秘钥
+//  Param padding 填充类算法类型 padding.NewZero()、padding.NewPKCS5()、padding.NewPKCS7()
+//  Return string 加密后的值 并且 base64 URLEncode
+//  Return error 错误信息
+func AesECBEncrypt(value, key string, padding padding.Padding) (string, error) {
+	encrypt, err := pattern.NewECB(key).SetPadding(padding).Encrypt(value)
+	value = Base64.Encrypt(encrypt)
+	return value, err
+}
 
-	block, err := aes.NewCipher(keyData)
+//AesECBDecrypt
+//  Author: Kevin·CC
+//  Description: Aes加密算法 ECB 模式 Base64Encode 编码
+//  Param value 要解密的值
+//  Param key 秘钥
+//  Param padding 填充类算法类型 padding.NewZero()、padding.NewPKCS5()、padding.NewPKCS7()
+//  Return string 解密后的值
+//  Return error 错误
+func AesECBDecrypt(value, key string, padding padding.Padding) (string, error) {
+	decrypt, err := pattern.NewECB(key).SetPadding(padding).Decrypt(value)
+	value = Base64.Encrypt(decrypt)
+	return value, err
+}
+
+//AesECBHexEncrypt
+//  Author: Kevin·CC
+//  Description: Aes加密算法 ECB 模式 Hex 编码
+//  Param value 要加密的值
+//  Param key 秘钥
+//  Param padding 填充类算法类型 padding.NewZero()、padding.NewPKCS5()、padding.NewPKCS7()
+//  Return string 加密后的值
+//  Return error 错误信息
+func AesECBHexEncrypt(value, key string, padding padding.Padding) (string, error) {
+	encrypt, err := pattern.NewECB(key).SetPadding(padding).Encrypt(value)
+	value = Hex.Encrypt(encrypt)
+	return value, err
+}
+
+//AesECBHexDecrypt
+//  Author: Kevin·CC
+//  Description: Aes加密算法
+//  Param value
+//  Param key
+//  Param padding 填充类算法类型 padding.NewZero()、padding.NewPKCS5()、padding.NewPKCS7()
+//  Return string 加密后的值
+//  Return error 错误信息
+func AesECBHexDecrypt(value, key string, padding padding.Padding) (string, error) {
+	encrypt, err := pattern.NewECB(key).SetPadding(padding).Encrypt(value)
 	if err != nil {
 		return "", err
 	}
-	blockSize := block.BlockSize()
-	origData := []byte(str)
-	//origData = PKCS5Padding(origData, blockSize)
-	origData = zeroPadding(origData, blockSize)
-
-	blockMode := cipher.NewCBCEncrypter(block, keyData[:blockSize])
-	aesData := make([]byte, len(origData))
-	// 根据CryptBlocks方法的说明，如下方式初始化crypted也可以
-	// aesData := origData
-	blockMode.CryptBlocks(aesData, origData)
-
-	return base64.URLEncoding.EncodeToString(aesData), nil
-}
-
-func zeroPadding(ciphertext []byte, blockSize int) []byte {
-	padding := blockSize - len(ciphertext)%blockSize
-	padtext := bytes.Repeat([]byte{0}, padding)
-	return append(ciphertext, padtext...)
-}
-
-func zeroUnPadding(origData []byte) []byte {
-	//	length := len(origData)
-	//	unpadding := int(origData[length-1])
-	//	return origData[:(length - unpadding)]
-
-	index := bytes.IndexByte(origData, 0)
-	return origData[0:index]
-}
-
-// AesDecrypt Aes解密
-func AesDecrypt(str, key string) (string, error) {
-	keyData := []byte(key)
-	if len(keyData) != 16 {
-		return "", errors.New("aes key 长度必须等于16")
-	}
-
-	aesData, err := base64.StdEncoding.DecodeString(str)
-	if err != nil {
-		aesData, err = base64.URLEncoding.DecodeString(str)
-		if err != nil {
-			return "", err
-		}
-	}
-
-	block, err2 := aes.NewCipher(keyData)
-	if err2 != nil {
-		return "", err2
-	}
-	blockSize := block.BlockSize()
-	blockMode := cipher.NewCBCDecrypter(block, keyData[:blockSize])
-	origData := make([]byte, len(aesData))
-	// origData := aesData
-	blockMode.CryptBlocks(origData, aesData)
-	//origData = PKCS5UnPadding(origData)
-	origData = zeroUnPadding(origData)
-	origStr := strings.Replace(string(origData), "\n", "", -1)
-
-	return origStr, nil
-}
-
-func pKCS5Padding(ciphertext []byte, blockSize int) []byte {
-	padding := blockSize - len(ciphertext)%blockSize
-	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
-	return append(ciphertext, padtext...)
-}
-
-func pKCS5UnPadding(origData []byte) []byte {
-	length := len(origData)
-	// 去掉最后一个字节 unpadding 次
-	unpadding := int(origData[length-1])
-	return origData[:(length - unpadding)]
+	return Hex.Decrypt(string(encrypt))
 }
