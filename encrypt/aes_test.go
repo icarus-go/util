@@ -17,7 +17,7 @@ func Test_AES_Encrypt_PKCS7(t *testing.T) {
 
 	println(base64Val)
 
-	bytes, _ := Base64.Decrypt(base64Val)
+	bytes, _ := Hex.Decrypt("da59b3997437c0cf744f2067cd322cf1")
 
 	decrypt, err := pattern.NewECB("Hcdipgaf38gFPg1z").SetPadding(padding.NewPKCS7()).Decrypt(bytes)
 	if err != nil {

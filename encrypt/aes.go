@@ -28,9 +28,13 @@ func AesECBEncrypt(value, key string, padding padding.Padding) (string, error) {
 //  Return string 解密后的值
 //  Return error 错误
 func AesECBDecrypt(value, key string, padding padding.Padding) (string, error) {
+	value, err := Base64.Decrypt(value)
+	if err != nil {
+		return "", err
+	}
+
 	decrypt, err := pattern.NewECB(key).SetPadding(padding).Decrypt(value)
-	value = Base64.Encrypt(decrypt)
-	return value, err
+	return string(decrypt), err
 }
 
 //AesECBHexEncrypt
@@ -56,9 +60,14 @@ func AesECBHexEncrypt(value, key string, padding padding.Padding) (string, error
 //  Return string 加密后的值
 //  Return error 错误信息
 func AesECBHexDecrypt(value, key string, padding padding.Padding) (string, error) {
-	encrypt, err := pattern.NewECB(key).SetPadding(padding).Encrypt(value)
+	decrypt, err := Hex.Decrypt(value)
+	if err != nil {
+		return "", err
+
+	}
+	decryptBytes, err := pattern.NewECB(key).SetPadding(padding).Decrypt(decrypt)
 	if err != nil {
 		return "", err
 	}
-	return Hex.Decrypt(string(encrypt))
+	return string(decryptBytes), nil
 }

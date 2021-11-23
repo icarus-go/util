@@ -86,7 +86,17 @@ func (e *ecb) Decrypt(source string) ([]byte, error) {
 
 	//分组分块加密
 	for index := 0; index < len(sourceBytes); index += block.BlockSize() {
-		block.Decrypt(tmpData, sourceBytes[index:index+block.BlockSize()])
+		length := index + block.BlockSize()
+		var bytes []byte
+
+		if length >= len(sourceBytes) {
+			bytes = sourceBytes[index:]
+		} else {
+			bytes = sourceBytes[index:length]
+		}
+
+		block.Decrypt(tmpData, bytes)
+
 		copy(decryptData, tmpData[0:])
 	}
 
