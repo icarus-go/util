@@ -8,16 +8,19 @@ import (
 
 func Test_AES_Encrypt_PKCS7(t *testing.T) {
 
-	encrypt, err := pattern.NewECB("Hcdipgaf38gFPg1z").SetPadding(padding.NewPKCS7()).Encrypt("13739092481")
+	encrypt, err := pattern.NewECB("Hcdipgaf38gFPg1z").SetPadding(padding.NewPKCS7()).Encrypt("蔡先生")
 	if err != nil {
 		t.Fatal(err.Error())
 		return
 	}
 	base64Val := Base64.Encrypt(encrypt)
 
+	//H97SZeoR-TUz87i9h0f0Sg==
+	//H97SZeoR+TUz87i9h0f0Sg==
+
 	println(base64Val)
 
-	bytes, _ := Hex.Decrypt("da59b3997437c0cf744f2067cd322cf1")
+	bytes, _ := Base64.Decrypt(base64Val)
 
 	decrypt, err := pattern.NewECB("Hcdipgaf38gFPg1z").SetPadding(padding.NewPKCS7()).Decrypt(bytes)
 	if err != nil {

@@ -13,7 +13,7 @@ func TestMaskAsterisk(t *testing.T) {
 		Name  MaskAsterisk `json:"name"`
 		Test  MaskAsterisk `json:"test"`
 	}{
-		Phone: "11111111111",
+		Phone: "440000200001011234",
 		Name:  "xjm",
 		Test:  "sdf32",
 	}

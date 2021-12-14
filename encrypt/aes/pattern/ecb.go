@@ -52,22 +52,19 @@ func (e *ecb) Encrypt(source string) ([]byte, error) {
 		return nil, err
 	}
 
-	encrypted := e.padding.Append(sourceBytes, block.BlockSize())
+	sourceBytes = e.padding.Append(sourceBytes, block.BlockSize())
 
 	blockSize := block.BlockSize()
-
 	//返回加密结果
-	encryptData := make([]byte, len(encrypted))
-
+	encryptData := make([]byte, len(sourceBytes))
 	//存储每次加密的数据
 	tmpData := make([]byte, blockSize)
 
 	//分组分块加密
-	for index := 0; index < len(encrypted); index += blockSize {
-		block.Encrypt(tmpData, encrypted[index:index+blockSize])
+	for index := 0; index < len(sourceBytes); index += blockSize {
+		block.Encrypt(tmpData, sourceBytes[index:index+blockSize])
 		copy(encryptData, tmpData)
 	}
-
 	return encryptData, nil
 
 }

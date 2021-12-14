@@ -3,16 +3,13 @@ package cstring
 // MaskAsterisk json输出星号掩码
 type MaskAsterisk string
 
-// String 获取字段串
-func (m MaskAsterisk) String() string {
-	return string(m)
-}
-
-// MarshalJSON  序列化
-func (m MaskAsterisk) MarshalJSON() ([]byte, error) {
-
+// Value
+//  Author: Kevin·CC
+//  Description: 掩码内容
+//  Return string
+func (m MaskAsterisk) Value() string {
 	if m.String() == "" {
-		return []byte(""), nil
+		return ""
 	}
 
 	rs := []rune(m.String())
@@ -21,7 +18,28 @@ func (m MaskAsterisk) MarshalJSON() ([]byte, error) {
 
 	result := string(rs[:startIndex]) + asteristkString + string(rs[startIndex+length:])
 
-	return []byte(`"` + result + `"`), nil
+	return result
+}
+
+// Bytes
+//  Author: Kevin·CC
+//  Description: 字节码
+//  Return []byte
+func (m MaskAsterisk) Bytes() []byte {
+	return []byte(m.String())
+}
+
+// String
+//  Author: Kevin·CC
+//  Description: 初始内容
+//  Return string
+func (m MaskAsterisk) String() string {
+	return string(m)
+}
+
+// MarshalJSON  序列化
+func (m MaskAsterisk) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + m.Value() + `"`), nil
 }
 
 func (m MaskAsterisk) rule() (int, int) {
