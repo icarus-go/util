@@ -53,10 +53,19 @@ func (*birthday) Parse(birthday string) (time.Time, error) {
 		birthday = "19" + birthday
 	} // 1代身份证,将一代处理为2代格式
 
-	birthdayTime, err := time.ParseInLocation("20060102", birthday, time.Local)
+	birthdayTime, err := time.ParseInLocation(date.YMDNumber.Value(), birthday, time.Local)
 	if err != nil {
 		return time.Now(), err
 	}
 
 	return birthdayTime, nil
+}
+
+// Age
+//  Author: Kevin·CC
+//  Description: 获取年龄
+//  Param birthdate 生日日期
+//  Return int 年龄
+func (*birthday) Age(birthdate time.Time) int {
+	return time.Now().Year() - birthdate.Year()
 }

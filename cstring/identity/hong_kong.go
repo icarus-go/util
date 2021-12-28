@@ -63,3 +63,15 @@ func (h hongKong) isValidHKCard(idCard string) (ok bool) {
 	return
 
 }
+
+func (h hongKong) Birthday(idCard string) (string, error) {
+	return "", ErrUnparseBirthday
+}
+
+func (h hongKong) Age(idCard string) (int, error) {
+	return 0, ErrUnparseAge
+}
+
+func (h hongKong) Gender(idCard string) (int, error) {
+	return 0, ErrUnparseGender
+}

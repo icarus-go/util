@@ -96,3 +96,15 @@ func (t taiWanAoMen) isValid(idCard string) bool {
 	}
 	return 10-sum%10 == end
 }
+
+func (t taiWanAoMen) Birthday(idCard string) (string, error) {
+	return "", ErrUnparseBirthday
+}
+
+func (t taiWanAoMen) Age(idCard string) (int, error) {
+	return 0, ErrUnparseAge
+}
+
+func (t taiWanAoMen) Gender(idCard string) (int, error) {
+	return 0, ErrUnparseGender
+}

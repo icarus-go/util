@@ -5,14 +5,17 @@ import (
 	"pmo-test4.yz-intelligence.com/base/utils/cstring/constant"
 )
 
-type AreaFactory interface {
+type ParseFactory interface {
 	// IsLocalValidIDCard
 	//  Description: 是否是当地有效的身份证
 	//  Author:  Kevin·CC
 	IsLocalValidIDCard(idCard string) bool
+	Birthday(idCard string) (string, error)
+	Age(idCard string) (int, error)
+	Gender(idCard string) (int, error)
 }
 
-func New(length constant.IdentityLength) (AreaFactory, error) {
+func New(length constant.IdentityLength) (ParseFactory, error) {
 	switch length {
 	case constant.Mainland15:
 		return Mainland15, nil

@@ -10,7 +10,7 @@ type mainland15 struct{}
 // Mainland15 大陆15位身份证
 var Mainland15 = new(mainland15)
 
-func (mainland15) IsLocalValidIDCard(idCard string) bool {
+func (m mainland15) IsLocalValidIDCard(idCard string) bool {
 	match, err := regexp.Match(constant.Numbers.Value(), []byte(idCard))
 	if err != nil {
 		return false
@@ -19,24 +19,78 @@ func (mainland15) IsLocalValidIDCard(idCard string) bool {
 		return false
 	}
 
-	_, ok := constant.ProvinceCode[idCard[0:2]]
+	_, ok := constant.ProvinceCode[m.ProvinceCode(idCard)]
 	if !ok {
 		return false
 	}
 
-	birthday := "19" + idCard[6:12]
-
-	match, err = regexp.Match(constant.Birthday.Value(), []byte(birthday))
+	birthdate, err := m.Birthday(idCard)
 	if err != nil {
 		return false
 	}
-	if !match {
-		return false
+
+	return Birthday.IsValid(birthdate)
+}
+
+// Age
+//  Author: Kevin·CC
+//  Description: 年龄
+//  Param idCard 身份证
+//  Return int 年龄
+//  Return error 无法解析年龄的错误
+func (m mainland15) Age(idCard string) (int, error) {
+	birthdate, err := m.Birthday(idCard)
+	if err != nil {
+		return 0, err
 	}
 
-	if Birthday.IsValid(birthday) {
-		return true
+	parse, err := Birthday.Parse(birthdate)
+	if err != nil {
+		return 0, err
 	}
 
-	return false
+	return Birthday.Age(parse), nil
+}
+
+// Birthday
+//  Author: Kevin·CC
+//  Description: 获取15位身份证的
+//  Return string
+func (mainland15) Birthday(idCard string) (string, error) {
+	birthdate := "19" + string(idCard[6:12])
+	match, err := regexp.Match(constant.Birthday.Value(), []byte(birthdate))
+	if err != nil || !match {
+		return "", ErrUnparseBirthday
+	}
+	return birthdate, nil
+}
+
+// Gender
+//  Author: Kevin·CC
+//  Description: 性别
+//  Param idCard 身份证
+//  Return int 0
+//  Return error 无法解析性别
+func (m mainland15) Gender(idCard string) (int, error) {
+	return 0, ErrUnparseGender
+}
+
+// ProvinceCode
+//  Author: Kevin·CC
+//  Description: 获取省份编码
+//  Param idCard 身份证
+//  Return string 省份编码
+func (mainland15) ProvinceCode(idCard string) string {
+	return idCard[0:2]
+}
+
+// ProvinceName
+//  Author: Kevin·CC
+//  Description: 获取省份名称
+//  Param provinceCode 省份编码
+//  Return string 省份名称
+//  Return bool 是否存在
+func (mainland15) ProvinceName(provinceCode string) (string, bool) {
+	name, ok := constant.ProvinceCode[provinceCode]
+	return name, ok
 }

@@ -1,6 +1,7 @@
 package identity
 
 import (
+	"errors"
 	"pmo-test4.yz-intelligence.com/base/utils/cstring/constant"
 )
 
@@ -21,4 +22,25 @@ func IsValid(idCard string) bool {
 		}
 	}
 	return false
+}
+
+// Factory
+//  Author: Kevin·CC
+//  Description: 获取身份证解析工厂
+//  Param idCard
+//  Return ParseFactory
+//  Return error
+func Factory(idCard string) (ParseFactory, error) {
+	for _, length := range constant.Any {
+		if len(idCard) == length.Value() {
+			factory, err := New(length)
+			if err != nil {
+				continue
+			}
+			if factory.IsLocalValidIDCard(idCard) {
+				return factory, nil
+			}
+		}
+	}
+	return nil, errors.New("无法找到匹配长度且有效的身份证解析器")
 }

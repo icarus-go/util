@@ -1,6 +1,7 @@
 package identity
 
 import (
+	"errors"
 	"pmo-test4.yz-intelligence.com/base/utils/cstring/constant"
 	"regexp"
 	"strconv"
@@ -8,26 +9,30 @@ import (
 
 type mainland18 struct{}
 
-// Mainland18大陆18位身份证
-var Mainland18 = new(mainland18)
+// Mainland18 大陆18位身份证
+var (
+	Mainland18 = new(mainland18)
+	POWER      = []int{7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2}
+)
 
-func (mainland18) IsLocalValidIDCard(idCard string) bool {
+// IsLocalValidIDCard
+//  Author: Kevin·CC
+//  Description: 是否是有效的身份证
+//  Param idCard
+//  Return bool
+func (m mainland18) IsLocalValidIDCard(idCard string) bool {
 	if _, ok := constant.ProvinceCode[idCard[0:2]]; !ok {
 		return false
 	}
 
-	birthday := idCard[6:14]
-	match, err := regexp.Match(constant.Birthday.Value(), []byte(birthday))
+	birthdate, err := m.Birthday(idCard)
 	if err != nil {
 		return false
-	}
-	if !match {
-		return false
-	}
+	} // 身份证生日获取
 
-	if !Birthday.IsValid(birthday) {
+	if !Birthday.IsValid(birthdate) {
 		return false
-	}
+	} // 是否是有效的生日数字
 
 	last17Code := idCard[0:17]
 	matched, err := regexp.Match(constant.Numbers.Value(), []byte(last17Code))
@@ -43,7 +48,59 @@ func (mainland18) IsLocalValidIDCard(idCard string) bool {
 	return false
 }
 
-var POWER = []int{7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2}
+// Age
+//  Author: Kevin·CC
+//  Description: 年龄
+//  Param idCard 身份证
+//  Return int 年龄 (实岁)
+//  Return error 错误信息
+func (m mainland18) Age(idCard string) (int, error) {
+	birthdate, err := m.Birthday(idCard)
+	if err != nil {
+		return 0, errors.New("身份证获取生日解析失败")
+	}
+
+	parse, err := Birthday.Parse(birthdate)
+	if err != nil {
+		return 0, err
+	}
+
+	return Birthday.Age(parse), nil
+}
+
+// Gender
+//  Author: Kevin·CC
+//  Description: 获取性别
+//  Param idCard 身份证
+//  Return int 1=男,2=女
+//  Return bool 是否获取成功
+func (m mainland18) Gender(idCard string) (int, error) {
+	if len(idCard) != 18 {
+		return -1, errors.New("身份证长度不正确")
+	}
+	v, err := strconv.Atoi(string(idCard[17]))
+	if err != nil {
+		return 0, errors.New("获取身份证第17位失败")
+	}
+	return v, nil
+}
+
+// Birthday
+//  Author: Kevin·CC
+//  Description: 获取生日
+//  Param idCard 身份证
+//  Return string 生日
+func (mainland18) Birthday(idCard string) (string, error) {
+	birthday := idCard[6:14]
+	match, err := regexp.Match(constant.Birthday.Value(), []byte(birthday))
+	if err != nil {
+		return "", err
+	}
+	if !match {
+		return "", errors.New("不合法年龄")
+	}
+	return birthday, nil
+}
 
 func GetPowerSum(code string) int {
 	sum := 0
