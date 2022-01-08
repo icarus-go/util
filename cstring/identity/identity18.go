@@ -85,6 +85,22 @@ func (m mainland18) Gender(idCard string) (int, error) {
 	return v, nil
 }
 
+// GenderCNName
+//  Author: Kevin·Cai
+//  Description: 性别中文名
+//  Param gender 性别int值
+//  Return string CN名称
+//  Return error 错误
+func (m mainland18) GenderCNName(gender int) string {
+	if gender == 1 {
+		return "男"
+	}
+	if gender == 2 {
+		return "女"
+	}
+	return "未知"
+}
+
 // Birthday
 //  Author: Kevin·CC
 //  Description: 获取生日

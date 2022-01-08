@@ -12,6 +12,9 @@ import (
 //  Return bool 是否是初始化值
 func IsUnset(value interface{}) bool {
 	reflectValue := reflect.ValueOf(value)
+
+	println(reflectValue.Kind())
+
 	switch reflectValue.Kind() {
 	case reflect.String:
 		return reflectValue.Len() == 0
@@ -23,8 +26,18 @@ func IsUnset(value interface{}) bool {
 		return reflectValue.Uint() == 0
 	case reflect.Float32, reflect.Float64:
 		return reflectValue.Float() == 0
-	case reflect.Interface, reflect.Ptr:
+	case reflect.Interface:
 		return reflectValue.IsNil()
+	case reflect.Ptr:
+		if reflectValue.IsNil() {
+			return true
+		}
+		return IsUnset(reflectValue.Elem())
+	case reflect.Struct:
+		unset, ok := reflectValue.Interface().(Unset)
+		if ok {
+			return unset.Unset(value)
+		}
 	}
 	return reflect.DeepEqual(reflectValue.Interface(), reflect.Zero(reflectValue.Type()).Interface())
 }
