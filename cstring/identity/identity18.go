@@ -78,7 +78,7 @@ func (m mainland18) Gender(idCard string) (int, error) {
 	if len(idCard) != 18 {
 		return -1, errors.New("身份证长度不正确")
 	}
-	v, err := strconv.Atoi(string(idCard[17]))
+	v, err := strconv.Atoi(string(idCard[16]))
 	if err != nil {
 		return 0, errors.New("获取身份证第17位失败")
 	}

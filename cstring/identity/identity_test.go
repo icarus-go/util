@@ -6,7 +6,7 @@ import (
 )
 
 func Test_Identity_Parse(t *testing.T) {
-	idCard := "Q7387683"
+	idCard := "440508199606192918"
 	factory, err := Factory(idCard)
 	if err != nil {
 		t.Fatal(err.Error())
@@ -30,6 +30,31 @@ func Test_Identity_Parse(t *testing.T) {
 		t.Fatal(err.Error())
 		return
 	}
+
+	t.Log(age)
+
+}
+
+func Test_Identity_Mainland18(t *testing.T) {
+	idCard := "440508199606192918"
+
+	age, err := Mainland18.Age(idCard)
+	if err != nil {
+		return
+	}
+
+	birthday, err := Mainland18.Birthday(idCard)
+	if err != nil {
+		return
+	}
+
+	gender, err := Mainland18.Gender(idCard)
+	if err != nil {
+		return
+	}
+
+	t.Log(Mainland18.GenderCNName(gender))
+	t.Log(birthday)
 
 	t.Log(age)
 
