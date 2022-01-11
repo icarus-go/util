@@ -92,13 +92,10 @@ func (m mainland18) Gender(idCard string) (int, error) {
 //  Return string CN名称
 //  Return error 错误
 func (m mainland18) GenderCNName(gender int) string {
-	if gender == 1 {
-		return "男"
-	}
-	if gender == 2 {
+	if gender%2 == 0 {
 		return "女"
 	}
-	return "未知"
+	return "男"
 }
 
 // Birthday
