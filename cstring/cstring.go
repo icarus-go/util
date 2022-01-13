@@ -1,78 +1,41 @@
 package cstring
 
-// MaskAsterisk json输出星号掩码
-type MaskAsterisk string
+import "strings"
 
-// Value
+//IsBlank
 //  Author: Kevin·CC
-//  Description: 掩码内容
+//  Description: 是否是空字符串,如果是返回 `DefaultValue`
+//  Param judgment
+//  Param defaultValue
 //  Return string
-func (m MaskAsterisk) Value() string {
-	if m.String() == "" {
-		return ""
+func IsBlank(judgment string, defaultValue string) string {
+	if judgment == "" {
+		return defaultValue
 	}
-
-	rs := []rune(m.String())
-	startIndex, length := m.rule()
-	asteristkString := m.asterisk(length)
-
-	result := string(rs[:startIndex]) + asteristkString + string(rs[startIndex+length:])
-
-	return result
+	return judgment
 }
 
-// Bytes
-//  Author: Kevin·CC
-//  Description: 字节码
-//  Return []byte
-func (m MaskAsterisk) Bytes() []byte {
-	return []byte(m.String())
+// IndexOf
+//  Author: Kevin·Cai
+//  Description: (content) 是否包含 (include)
+//  Param content 内容
+//  Param include 要包含的内容
+//  Return bool 是否相等
+func IndexOf(content string, include string) bool {
+	return strings.Index(content, include) > -1
 }
 
-// String
-//  Author: Kevin·CC
-//  Description: 初始内容
-//  Return string
-func (m MaskAsterisk) String() string {
-	return string(m)
-}
-
-// MarshalJSON  序列化
-func (m MaskAsterisk) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + m.Value() + `"`), nil
-}
-
-func (m MaskAsterisk) rule() (int, int) {
-	rs := []rune(m.String())
-	l := len(rs)
-	switch l {
-	case 2:
-	case 3:
-		return 0, 1
-	case 11:
-		return 3, 4
-	case 18:
-		return 4, 10
-	default:
-		if l > 3 {
-			mol := l % 4
-			s := l / 4
-			return s, 2*s + mol
+// IndexOfs
+//  Author: Kevin·Cai
+//  Description: 是否包含这一批(includes)中的任意一个
+//  Param content 内容
+//  Param includes 要包含的集合
+//  Return bool 是否包含
+func IndexOfs(content string, includes ...string) bool {
+	for _, include := range includes {
+		if IndexOf(content, include) {
+			return true
 		}
-		return 0, 1
 	}
-	return 0, 0
-}
-
-func (m MaskAsterisk) asterisk(count int) string {
-	if count < 1 {
-		return ""
-	}
-
-	ret := ""
-	for i := 0; i < count; i++ {
-		ret += "*"
-	}
-
-	return ret
+	return false
 }
