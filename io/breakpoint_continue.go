@@ -1,10 +1,10 @@
 package io
 
 import (
+	"github.com/icarus-go/utils/encrypt"
+	"github.com/icarus-go/utils/io/constant"
 	"io/ioutil"
 	"os"
-	"pmo-test4.yz-intelligence.com/base/utils/encrypt"
-	"pmo-test4.yz-intelligence.com/base/utils/io/constant"
 	"strconv"
 )
 

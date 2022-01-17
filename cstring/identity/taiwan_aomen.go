@@ -1,7 +1,7 @@
 package identity
 
 import (
-	"pmo-test4.yz-intelligence.com/base/utils/cstring/constant"
+	"github.com/icarus-go/utils/cstring/constant"
 	"regexp"
 	"strconv"
 	"strings"

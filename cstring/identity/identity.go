@@ -2,7 +2,7 @@ package identity
 
 import (
 	"errors"
-	"pmo-test4.yz-intelligence.com/base/utils/cstring/constant"
+	"github.com/icarus-go/utils/cstring/constant"
 )
 
 // IsValid

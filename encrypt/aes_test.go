@@ -1,8 +1,8 @@
 package encrypt
 
 import (
-	"pmo-test4.yz-intelligence.com/base/utils/encrypt/aes/padding"
-	"pmo-test4.yz-intelligence.com/base/utils/encrypt/aes/pattern"
+	"github.com/icarus-go/utils/encrypt/aes/padding"
+	"github.com/icarus-go/utils/encrypt/aes/pattern"
 	"testing"
 )
 

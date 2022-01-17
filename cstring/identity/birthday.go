@@ -1,7 +1,7 @@
 package identity
 
 import (
-	"pmo-test4.yz-intelligence.com/base/utils/date"
+	"github.com/icarus-go/utils/date"
 	"time"
 )
 

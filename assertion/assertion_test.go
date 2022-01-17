@@ -1,7 +1,7 @@
 package assertion
 
 import (
-	"pmo-test4.yz-intelligence.com/kit/data/resource"
+	"github.com/icarus-go/data/resource"
 	"testing"
 	"time"
 )

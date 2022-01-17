@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/icarus-go/utils/excel/model"
+	"github.com/icarus-go/utils/excel/rewrite"
+	"github.com/icarus-go/utils/optimization"
 	"mime/multipart"
-	"pmo-test4.yz-intelligence.com/base/utils/excel/model"
-	"pmo-test4.yz-intelligence.com/base/utils/excel/rewrite"
-	"pmo-test4.yz-intelligence.com/base/utils/optimization"
 )
 
 var Excel = new(_excel)

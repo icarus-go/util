@@ -2,8 +2,8 @@ package cstring
 
 import (
 	"fmt"
-	"pmo-test4.yz-intelligence.com/base/utils/cstring/constant"
-	"pmo-test4.yz-intelligence.com/base/utils/cstring/identity"
+	"github.com/icarus-go/utils/cstring/constant"
+	"github.com/icarus-go/utils/cstring/identity"
 	"regexp"
 	"testing"
 )
