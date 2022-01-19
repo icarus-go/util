@@ -5,6 +5,7 @@ import (
 	"github.com/icarus-go/utils/cstring/constant"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type mainland18 struct{}
@@ -78,7 +79,13 @@ func (m mainland18) Gender(idCard string) (int, error) {
 	if len(idCard) != 18 {
 		return -1, errors.New("身份证长度不正确")
 	}
-	v, err := strconv.Atoi(string(idCard[16]))
+	val := string(idCard[16])
+
+	if strings.ToUpper(val) == "X" {
+		val = "10"
+	} // 如果是X
+
+	v, err := strconv.Atoi(val)
 	if err != nil {
 		return 0, errors.New("获取身份证第17位失败")
 	}
