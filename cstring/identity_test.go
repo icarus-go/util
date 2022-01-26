@@ -26,16 +26,3 @@ func Test_Identity_birthday(t *testing.T) {
 
 	fmt.Printf("%d", len(strings[0]))
 }
-
-func Test_Identity_gender(t *testing.T) {
-	idCard := "11010119200119983X"
-
-	gender, err := identity.Mainland18.Gender(idCard)
-	if err != nil {
-		return
-	}
-
-	name := identity.Mainland18.GenderCNName(gender)
-
-	t.Log(name)
-}

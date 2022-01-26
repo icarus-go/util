@@ -59,3 +59,36 @@ func Test_Identity_Mainland18(t *testing.T) {
 	t.Log(age)
 
 }
+
+func Test_Identity_Format_1970Before(t *testing.T) {
+	birthday := "19690101"
+	var err error
+	parse, err := Birthday.Parse(birthday)
+	if err != nil {
+		t.Fatal(err.Error())
+		return
+	}
+	t.Log(parse.Unix())
+
+}
+func Test_birthday_Age(t *testing.T) {
+	birthday := "19960619"
+
+	if Birthday.IsValid(birthday) {
+		parse, _ := Birthday.Parse(birthday)
+		age := Birthday.Age(parse)
+
+		println(age)
+	}
+}
+
+func Test_birthday_Normal(t *testing.T) {
+	birthday := "19960619"
+
+	if Birthday.IsValid(birthday) {
+		parse, _ := Birthday.Parse(birthday)
+		age := Birthday.NominalAge(parse)
+
+		println(age)
+	}
+}

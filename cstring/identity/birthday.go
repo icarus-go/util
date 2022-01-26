@@ -63,9 +63,18 @@ func (*birthday) Parse(birthday string) (time.Time, error) {
 
 // Age
 //  Author: Kevin·CC
-//  Description: 获取年龄
+//  Description: 获取年龄(周岁)
 //  Param birthdate 生日日期
 //  Return int 年龄
 func (*birthday) Age(birthdate time.Time) int {
+	return time.Now().Year() - birthdate.Year() - 1
+}
+
+// NominalAge
+//  Author: Kevin·Cai
+//  Description: 虚岁
+//  Param birthdate 生日
+//  Return int 年龄
+func (*birthday) NominalAge(birthdate time.Time) int {
 	return time.Now().Year() - birthdate.Year()
 }
