@@ -66,7 +66,7 @@ func (m mainland18) Age(idCard string) (int, error) {
 		return 0, err
 	}
 
-	return Birthday.Age(parse), nil
+	return Birthday.Age(parse)
 }
 
 // Gender

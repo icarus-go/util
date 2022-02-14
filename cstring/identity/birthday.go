@@ -1,13 +1,17 @@
 package identity
 
 import (
+	"errors"
 	"github.com/icarus-go/utils/date"
 	"time"
 )
 
 type birthday struct{}
 
-var Birthday = new(birthday)
+var (
+	Birthday           = new(birthday)
+	ErrInvalidBirthday = errors.New("无效生日")
+)
 
 func (b *birthday) IsValid(birthday string) bool {
 
@@ -66,21 +70,16 @@ func (*birthday) Parse(birthday string) (time.Time, error) {
 //  Description: 获取年龄(周岁)
 //  Param birthdate 生日日期
 //  Return int 年龄
-func (*birthday) Age(birthday time.Time) int {
+func (*birthday) Age(birthday time.Time) (int, error) {
 	var (
-		difference   int64
 		current      = time.Now().Unix()
 		birthdayUnix = birthday.Unix()
 	)
 
-	if birthdayUnix < current {
-		difference = current - birthdayUnix
-	} else {
-		difference = birthdayUnix - current
+	if birthdayUnix > current {
+		return 0, ErrInvalidBirthday
 	}
-	value := float64(difference / (60 * 60 * 24 * 365))
-
-	return int(value)
+	return int((current - birthdayUnix) / (60 * 60 * 24 * 365)), nil
 }
 
 // NominalAge
