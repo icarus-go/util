@@ -72,14 +72,32 @@ func (*birthday) Parse(birthday string) (time.Time, error) {
 //  Return int 年龄
 func (*birthday) Age(birthday time.Time) (int, error) {
 	var (
-		current      = time.Now().Unix()
-		birthdayUnix = birthday.Unix()
+		year         = birthday.Year()   // 生日(年)
+		month        = birthday.Month()  // 生日(月)
+		now          = time.Now()        // 当前
+		currentMonth = now.Month()       // 当前(月)
+		age          = now.Year() - year // 年龄
 	)
 
-	if birthdayUnix > current {
+	if birthday.After(now) {
 		return 0, ErrInvalidBirthday
 	}
-	return int((current - birthdayUnix) / (60 * 60 * 24 * 365)), nil
+
+	if currentMonth < month {
+		age--
+	} // 如果当前月份小于生日中的月份,则证明未过生日,则未满周岁
+
+	var (
+		currentDay  = now.Day()
+		birthdayDay = birthday.Day()
+	)
+
+	if currentMonth == month && currentDay < birthdayDay {
+		age--
+	} // 如果当前天数小于生日中的年份,并且月份相同,则证明未过生日,则未满周岁
+
+	return age, nil
+
 }
 
 // NominalAge

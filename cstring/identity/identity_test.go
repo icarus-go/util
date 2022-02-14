@@ -76,7 +76,7 @@ func Test_birthday_Age(t *testing.T) {
 
 	if Birthday.IsValid(birthday) {
 		parse, _ := Birthday.Parse(birthday)
-		age := Birthday.Age(parse)
+		age, _ := Birthday.Age(parse)
 
 		println(age)
 	}
@@ -94,11 +94,14 @@ func Test_birthday_Normal(t *testing.T) {
 }
 
 func Test_Birthday_Age2(t *testing.T) {
-	birthday := "20230214"
+	birthday := "20220214"
 
 	parse, _ := Birthday.Parse(birthday)
 
-	age := Birthday.Age(parse)
+	age, err := Birthday.Age(parse)
+	if err != nil {
+		println(err.Error())
+	}
 
 	println(age)
 }
