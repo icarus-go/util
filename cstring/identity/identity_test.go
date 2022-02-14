@@ -72,7 +72,7 @@ func Test_Identity_Format_1970Before(t *testing.T) {
 
 }
 func Test_birthday_Age(t *testing.T) {
-	birthday := "19960619"
+	birthday := "20220101"
 
 	if Birthday.IsValid(birthday) {
 		parse, _ := Birthday.Parse(birthday)
@@ -91,4 +91,14 @@ func Test_birthday_Normal(t *testing.T) {
 
 		println(age)
 	}
+}
+
+func Test_Birthday_Age2(t *testing.T) {
+	birthday := "20230214"
+
+	parse, _ := Birthday.Parse(birthday)
+
+	age := Birthday.Age(parse)
+
+	println(age)
 }

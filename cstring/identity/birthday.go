@@ -66,8 +66,21 @@ func (*birthday) Parse(birthday string) (time.Time, error) {
 //  Description: 获取年龄(周岁)
 //  Param birthdate 生日日期
 //  Return int 年龄
-func (*birthday) Age(birthdate time.Time) int {
-	return time.Now().Year() - birthdate.Year() - 1
+func (*birthday) Age(birthday time.Time) int {
+	var (
+		difference   int64
+		current      = time.Now().Unix()
+		birthdayUnix = birthday.Unix()
+	)
+
+	if birthdayUnix < current {
+		difference = current - birthdayUnix
+	} else {
+		difference = birthdayUnix - current
+	}
+	value := float64(difference / (60 * 60 * 24 * 365))
+
+	return int(value)
 }
 
 // NominalAge
